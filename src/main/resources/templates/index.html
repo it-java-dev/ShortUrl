@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>short-url.com.ua</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div style="width: 900px" class=".container position-absolute top-50 start-50 translate-middle">
+    <form class="d-flex" role="form" method="post" action="/short">
+        <input class="form-control me-2" type="url" name="longUrl"
+               placeholder="Enter your long URL" required
+               th:value="${shortUrl} ? ${shortUrl} : ''">
+        <button class="btn btn-outline-secondary" type="submit">Short URL</button>
+    </form>
+    <br>
+    <div th:if="${urls}!=null" style="height: 300px" class="list-group overflow-auto">
+        <div th:each="i: ${#numbers.sequence(urls.size()-1,0,-1)}" class="list-group-item">
+            <form class="row" role="form" method="post" action="/delete">
+                <div class="col-14">
+                    <div class="row">
+                        <p class="col-4 fw-bold">Long URL:</p>
+                        <h5 class="col-5 text-start">
+                            <a style="color: gray"
+                               th:href="@{${urls[i].getUrl()}}"
+                               th:text="${urls[i].getUrl()}"
+                               class="btn-link">
+                            </a>
+                        </h5>
+                    </div>
+
+                    <div class="row">
+                        <p class="col-4 fw-bold">Short URL:</p>
+                        <h5 class="col-5 text-start">
+                            <a style="color: gray"
+                               th:href="@{'/short/'+${urls[i].id}}"
+                               th:text="'http://localhost:'+
+                                         ${@environment.getProperty('server.port')} +
+                                         '/short/'+${urls[i].id}"
+                               class="btn-link">
+                            </a>
+                        </h5>
+                        <small class="col-3 text-center"
+                               th:text="${#dates.format(urls[i].lastAccess,'yyyy-MM-dd (HH:mm:ss)')}+ ' quantity of clicks: '+${urls[i].count}"
+                        ></small>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-secondary" th:name="id" th:value="${urls[i].id}">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
